@@ -1,17 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { checkBackendHealth } from "@/lib/api";
+import {
+  analyzeIncident,
+  IncidentResponse,
+} from "@/lib/api";
 
 export default function Home() {
-  const [status, setStatus] = useState("Not connected");
+  const [result, setResult] =
+    useState<IncidentResponse | null>(null);
 
-  async function testBackend() {
+  const [loading, setLoading] = useState(false);
+
+  async function handleAnalyze() {
+    setLoading(true);
+
     try {
-      const result = await checkBackendHealth();
-      setStatus(`${result.service} — ${result.status}`);
-    } catch {
-      setStatus("Backend unavailable");
+      const response = await analyzeIncident({
+        incident:
+          "Payment API is returning 500 errors",
+        logs:
+          "ConnectionTimeoutError: database connection timed out",
+      });
+
+      setResult(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -21,20 +37,19 @@ export default function Home() {
         IncidentPilot
       </h1>
 
-      <p className="mt-2">
-        Multi-Agent Incident Analysis System
-      </p>
-
       <button
-        onClick={testBackend}
+        onClick={handleAnalyze}
+        disabled={loading}
         className="mt-6 border-2 border-black px-5 py-3"
       >
-        Test Backend
+        {loading ? "Analyzing..." : "Analyze Incident"}
       </button>
 
-      <p className="mt-4">
-        Status: {status}
-      </p>
+      {result && (
+        <pre className="mt-6 whitespace-pre-wrap">
+          {JSON.stringify(result, null, 2)}
+        </pre>
+      )}
     </main>
   );
 }

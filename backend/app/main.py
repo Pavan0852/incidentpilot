@@ -1,10 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.schemas.incident import IncidentRequest, IncidentResponse
+
+
 app = FastAPI(
     title="IncidentPilot API",
     version="1.0.0",
 )
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,3 +28,18 @@ async def health_check():
         "service": "incidentpilot-api",
         "version": "1.0.0",
     }
+
+
+@app.post(
+    "/api/analyze",
+    response_model=IncidentResponse,
+)
+async def analyze_incident(
+    request: IncidentRequest,
+):
+    return IncidentResponse(
+        status="received",
+        message="Incident received successfully",
+        incident=request.incident,
+        logs=request.logs,
+    )
