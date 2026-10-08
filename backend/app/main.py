@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.schemas.incident import IncidentRequest, IncidentResponse
 from app.state.incident_state import IncidentState
-from app.workflow import analyze_incident
+from app.graph.incident_graph import incident_graph
 
 
 app = FastAPI(
@@ -39,16 +39,16 @@ async def health_check():
 async def analyze_incident_endpoint(
     request: IncidentRequest,
 ):
-    state = IncidentState(
+    initial_state = IncidentState(
         incident=request.incident,
         logs=request.logs,
     )
 
-    result = analyze_incident(state)
+    result = incident_graph.invoke(initial_state)
 
     return IncidentResponse(
         status="completed",
-        triage=result.triage,
-        diagnosis=result.diagnosis,
-        resolution=result.resolution,
+        triage=result["triage"],
+        diagnosis=result["diagnosis"],
+        resolution=result["resolution"],
     )
