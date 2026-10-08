@@ -50,4 +50,5 @@ async def analyze_incident_endpoint(
         status="completed",
         triage=result.triage,
         diagnosis=result.diagnosis,
+        resolution=result.resolution,
     )

@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 
 from app.schemas.diagnosis import DiagnosisResult
 from app.schemas.triage import TriageResult
+from app.schemas.resolution import ResolutionResult
 
 
 class IncidentRequest(BaseModel):
@@ -20,3 +21,4 @@ class IncidentResponse(BaseModel):
     status: str
     triage: TriageResult
     diagnosis: DiagnosisResult
+    resolution: ResolutionResult
