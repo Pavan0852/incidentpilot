@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.agents.triage_agent import TriageAgent
 from app.schemas.incident import IncidentRequest, IncidentResponse
+from app.state.incident_state import IncidentState
+from app.workflow import analyze_incident
 
 
 app = FastAPI(
@@ -22,9 +23,6 @@ app.add_middleware(
 )
 
 
-triage_agent = TriageAgent()
-
-
 @app.get("/health")
 async def health_check():
     return {
@@ -38,15 +36,18 @@ async def health_check():
     "/api/analyze",
     response_model=IncidentResponse,
 )
-async def analyze_incident(
+async def analyze_incident_endpoint(
     request: IncidentRequest,
 ):
-    triage_result = triage_agent.analyze(
+    state = IncidentState(
         incident=request.incident,
         logs=request.logs,
     )
 
+    result = analyze_incident(state)
+
     return IncidentResponse(
         status="completed",
-        triage=triage_result,
+        triage=result.triage,
+        diagnosis=result.diagnosis,
     )
