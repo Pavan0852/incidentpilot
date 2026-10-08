@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from app.schemas.triage import TriageResult
+
 
 class IncidentRequest(BaseModel):
     incident: str = Field(
@@ -15,6 +17,4 @@ class IncidentRequest(BaseModel):
 
 class IncidentResponse(BaseModel):
     status: str
-    message: str
-    incident: str
-    logs: str | None
+    triage: TriageResult
