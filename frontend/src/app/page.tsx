@@ -6,6 +6,9 @@ import {
   IncidentResponse,
 } from "@/lib/api";
 
+import { APP_VERSION } from "@/config/version";
+import CurrentYear from "@/components/CurrentYear";
+
 export default function Home() {
   const [incident, setIncident] = useState("");
   const [logs, setLogs] = useState("");
@@ -48,8 +51,8 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 lg:px-8">
+      <div className="w-full">
 
         {/* Application Header */}
         <header className="border-3 border-border bg-surface shadow-[6px_6px_0_var(--shadow)]">
@@ -59,9 +62,14 @@ export default function Home() {
                 AI INCIDENT RESPONSE SYSTEM
               </p>
 
-              <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
-                IncidentPilot
-              </h1>
+              <div className="mt-1 flex flex-wrap items-center gap-3">
+                <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                  IncidentPilot
+                </h1>
+                <span className="relative top-3.5 font-mono text-xs font-bold">
+                  { APP_VERSION }
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-3 border-2 border-border bg-green px-3 py-2 font-mono text-xs font-bold uppercase">
@@ -117,7 +125,7 @@ export default function Home() {
                 onChange={(event) =>
                   setLogs(event.target.value)
                 }
-                placeholder="Paste relevant logs or error messages here..."
+                placeholder="Paste relevant logs or error messages here...(optional)"
                 className="min-h-40 w-full resize-y border-3 border-border bg-white p-4 font-mono text-sm outline-none focus:bg-blue/20"
               />
             </div>
@@ -443,6 +451,18 @@ export default function Home() {
           </section>
         )}
       </div>
+
+      {/* Application Footer */}
+      <footer className="mt-8 border-t-2 border-border py-4">
+        <div className="flex flex-col gap-2 font-mono text-xs sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © <CurrentYear /> IncidentPilot. All rights reserved.
+          </p>
+
+          <p>{APP_VERSION}</p>
+        </div>
+      </footer>
+
     </main>
   );
 }
