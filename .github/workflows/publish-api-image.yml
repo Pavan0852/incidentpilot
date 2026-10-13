@@ -4,7 +4,7 @@ name: Publish IncidentPilot API Image
 on:
   push:
     tags:
-      - "v*"
+      - "api-v*"
   workflow_dispatch:
 
 permissions:
@@ -29,6 +29,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      
+      - name: Extract backend image version
+        id: meta
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/api-v* ]]; then
+            VERSION="${GITHUB_REF_NAME#api-v}"
+          else
+            VERSION="manual-${GITHUB_SHA::7}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Build and publish image
         uses: docker/build-push-action@v6
         with:
@@ -36,5 +48,5 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/pavan0852/incidentpilot-api:1.0.0
+            ghcr.io/pavan0852/incidentpilot-api:${{ steps.meta.outputs.version }}
             ghcr.io/pavan0852/incidentpilot-api:sha-${{ github.sha }}
